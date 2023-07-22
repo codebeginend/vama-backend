@@ -1,0 +1,29 @@
+version: "3.5"
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-vama
+    ports:
+      - 54322:5432
+    environment:
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_DB}
+    volumes:
+      - ../vama-db/vama:/var/lib/postgresql/data
+    networks:
+      - vama-backend-network
+  flyway:
+    image: flyway/flyway:9.8.1
+    container_name: flyway-vama
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - postgres
+    command: -user=${DATABASE_USERNAME} -password=${DATABASE_PASSWORD} -url=jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB} migrate
+    networks:
+      - vama-backend-network
+networks:
+  vama-backend-network:
+    driver: bridge
