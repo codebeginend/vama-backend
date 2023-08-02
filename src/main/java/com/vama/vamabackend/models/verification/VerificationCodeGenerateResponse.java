@@ -8,4 +8,6 @@ import java.time.LocalDateTime;
 public class VerificationCodeGenerateResponse {
     private String phoneNumber;
     private LocalDateTime expiresAt;
+    @Deprecated
+    private String code;
 }

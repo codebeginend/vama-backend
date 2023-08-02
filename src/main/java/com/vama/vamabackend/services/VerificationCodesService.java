@@ -38,6 +38,7 @@ public class VerificationCodesService {
         VerificationCodeGenerateResponse response = new VerificationCodeGenerateResponse();
         response.setPhoneNumber(request.getPhoneNumber());
         response.setExpiresAt(entity.getExpiresAt());
+        response.setCode(randomCode);
         return response;
     }
 
