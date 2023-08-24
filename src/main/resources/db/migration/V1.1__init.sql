@@ -10,6 +10,7 @@ CREATE TABLE users
     id bigserial NOT NULL,
     name character varying(255),
     logo character varying(255),
+    email character varying(255),
     username character varying(255) UNIQUE NOT NULL,
     password character varying(255),
     role_id bigint NOT NULL,
