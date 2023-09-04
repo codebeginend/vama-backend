@@ -5,7 +5,9 @@ import com.vama.vamabackend.persistence.repository.ProductsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -19,5 +21,9 @@ public class ProductsService {
 
     public ProductsEntity findById(Long id){
         return productsRepository.findById(id).orElse(null);
+    }
+
+    public List<ProductsEntity> relatedFindAllByIdProductId(Long productId){
+        return productsRepository.findAllById(Arrays.asList(productId)).stream().collect(Collectors.toList());
     }
 }

@@ -26,6 +26,11 @@ public class ProductsController {
         return productsService.findById(id);
     }
 
+    @GetMapping(value = "related/all")
+    private List<ProductsEntity> findAllRelated(@RequestParam(name = "productId") Long productId){
+        return productsService.relatedFindAllByIdProductId(productId);
+    }
+
     @GetMapping(value = "stock/all")
     private List<ProductStockDetails> findAllStock(@RequestParam(name = "productId") Long productId){
         return stockDetailsService.findAllByProductId(productId);

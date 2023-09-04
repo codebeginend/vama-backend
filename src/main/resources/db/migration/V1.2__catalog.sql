@@ -8,9 +8,16 @@ create table categories(
 create table products(
     id bigserial NOT NULL,
     name character varying(255) NOT NULL,
+    code character varying(20),
     logo character varying(255) NOT NULL,
     description character varying(255) NOT NULL,
     category_id bigserial,
+    unit character varying(255),
+    unit_type character varying(255),
+    unit_value decimal,
+    price decimal,
+    discount decimal,
+    stock decimal,
     CONSTRAINT products_pkey PRIMARY KEY (id),
     CONSTRAINT products_categories_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
@@ -38,33 +45,69 @@ VALUES ('Крема', 2);
 INSERT INTO categories(name, parent_id)
 VALUES ('Для полости рта', 2);
 
-INSERT INTO products(name, logo, description, category_id)
-VALUES ('Стиральный порошок Tide',
+INSERT INTO products(name, logo, description, category_id, unit, unit_type, unit_value, price, discount, stock)
+VALUES ('Стиральный порошок Tide 900',
         'https://magnitcosmetic.ru/upload/iblock/4d4/4d4417dad1e95edf4f964e0b21620568.jpeg',
         'Стиральный порошок Tide',
-        3);
-INSERT INTO products(name, logo, description, category_id)
-VALUES ('Стиральный порошок Tide',
+        3,
+        'VOLUME',
+        'MILLILITER',
+        900,
+        120,
+        50,
+        20);
+INSERT INTO products(name, logo, description, category_id, unit, unit_type, unit_value, price, discount, stock)
+VALUES ('Стиральный порошок Tide 800',
         'https://magnitcosmetic.ru/upload/iblock/4d4/4d4417dad1e95edf4f964e0b21620568.jpeg',
         'Стиральный порошок Tide',
-        3);
-INSERT INTO products(name, logo, description, category_id)
-VALUES ('Стиральный порошок Tide',
+        3,
+        'VOLUME',
+        'MILLILITER',
+        800,
+        100,
+        50,
+        10);
+INSERT INTO products(name, logo, description, category_id, unit, unit_type, unit_value, price, discount, stock)
+VALUES ('Стиральный порошок Tide 1200',
         'https://magnitcosmetic.ru/upload/iblock/4d4/4d4417dad1e95edf4f964e0b21620568.jpeg',
         'Стиральный порошок Tide',
-        3);
-INSERT INTO products(name, logo, description, category_id)
-VALUES ('Стиральный порошок Tide',
+        3,
+        'VOLUME',
+        'MILLILITER',
+        1200,
+        200,
+        50,
+        4);
+INSERT INTO products(name, logo, description, category_id, unit, unit_type, unit_value, price, discount, stock)
+VALUES ('Стиральный порошок Tide 1300',
         'https://magnitcosmetic.ru/upload/iblock/4d4/4d4417dad1e95edf4f964e0b21620568.jpeg',
         'Стиральный порошок Tide',
-        3);
-INSERT INTO products(name, logo, description, category_id)
-VALUES ('Стиральный порошок Tide',
+        3,
+        'VOLUME',
+        'MILLILITER',
+        900,
+        300,
+        50,
+        100);
+INSERT INTO products(name, logo, description, category_id, unit, unit_type, unit_value, price, discount, stock)
+VALUES ('Стиральный порошок Tide 1400',
         'https://magnitcosmetic.ru/upload/iblock/4d4/4d4417dad1e95edf4f964e0b21620568.jpeg',
         'Стиральный порошок Tide',
-        3);
-INSERT INTO products(name, logo, description, category_id)
-VALUES ('Стиральный порошок Tide',
+        3,
+        'VOLUME',
+        'MILLILITER',
+        1400,
+        400,
+        50,
+        30);
+INSERT INTO products(name, logo, description, category_id, unit, unit_type, unit_value, price, discount, stock)
+VALUES ('Стиральный порошок Tide 1500',
         'https://magnitcosmetic.ru/upload/iblock/4d4/4d4417dad1e95edf4f964e0b21620568.jpeg',
         'Стиральный порошок Tide',
-        3);
+        3,
+        'VOLUME',
+        'MILLILITER',
+        1500,
+        500,
+        50,
+        11);
