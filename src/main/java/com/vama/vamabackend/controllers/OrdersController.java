@@ -31,6 +31,11 @@ public class OrdersController {
         return ordersService.findByIdMe(orderId);
     }
 
+    @GetMapping(value = "me/last")
+    private OrdersResponse getLastMe(){
+        return ordersService.findLastMe();
+    }
+
     @GetMapping(value = "items/me/all")
     private List<OrderItemsResponse> getOrderItemsMe(@RequestParam Long orderId){
         return ordersService.findAllOrderItemsByOrderId(orderId);

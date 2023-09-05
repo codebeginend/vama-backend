@@ -21,6 +21,11 @@ public class ProductsController {
         return productsService.findAllByCategoryId(categoryId);
     }
 
+    @GetMapping(value = "all")
+    private List<ProductsEntity> findAll(){
+        return productsService.findAll();
+    }
+
     @GetMapping()
     private ProductsEntity findById(@RequestParam(name = "id") Long id){
         return productsService.findById(id);

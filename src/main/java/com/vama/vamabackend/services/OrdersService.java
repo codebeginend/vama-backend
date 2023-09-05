@@ -102,6 +102,26 @@ public class OrdersService {
         return response;
     }
 
+    public OrdersResponse findLastMe() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userDetailsService.findByUsername(username);
+
+        OrdersEntity ordersEntity = ordersRepository.findLastByUserId(userEntity.getId());
+        if (ordersEntity == null){
+            return null;
+        }
+        OrderStatusesEntity orderStatus = orderStatusesRepository.findLastByOrderId(ordersEntity.getId());
+        if (orderStatus == null){
+            return null;
+        }
+        OrdersResponse response = OrdersResponse.builder()
+                .id(ordersEntity.getId())
+                .statusName(orderStatus.getName().name())
+                .createdAt(orderStatus.getCreatedAt()).build();
+        return response;
+    }
+
     public List<OrderItemsResponse> findAllOrderItemsByOrderId(Long orderId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
