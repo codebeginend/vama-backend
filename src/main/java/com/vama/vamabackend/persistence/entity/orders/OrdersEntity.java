@@ -29,4 +29,7 @@ public class OrdersEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_type")
     private PaymentTypeEnum paymentType;
+
+    @Column(name = "payment_status")
+    private String paymentStatus;
 }

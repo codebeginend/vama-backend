@@ -2,6 +2,7 @@ create table categories(
     id bigserial NOT NULL,
     name character varying(255) NOT NULL,
     parent_id integer,
+    is_published boolean default true,
     CONSTRAINT categories_pkey PRIMARY KEY (id)
 );
 
@@ -18,6 +19,7 @@ create table products(
     price decimal,
     discount decimal,
     stock decimal,
+    is_published boolean default true,
     CONSTRAINT products_pkey PRIMARY KEY (id),
     CONSTRAINT products_categories_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );

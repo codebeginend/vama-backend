@@ -1,5 +1,7 @@
 package com.vama.vamabackend.controllers;
 
+import com.vama.vamabackend.models.products.ProductDetailsAdminResponse;
+import com.vama.vamabackend.models.products.ProductsAdminResponse;
 import com.vama.vamabackend.persistence.entity.products.ProductStockDetails;
 import com.vama.vamabackend.persistence.entity.products.ProductsEntity;
 import com.vama.vamabackend.services.ProductStockDetailsService;
@@ -7,6 +9,7 @@ import com.vama.vamabackend.services.ProductsService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -19,6 +22,12 @@ public class ProductsController {
     @GetMapping(value = "category")
     private List<ProductsEntity> findAllByCategoryId(@RequestParam(name = "categoryId") Long categoryId){
         return productsService.findAllByCategoryId(categoryId);
+    }
+
+    @GetMapping(value = "search")
+    private List<ProductsEntity> findAllByName(@RequestParam(name = "name") String name){
+        List<ProductsEntity> list = productsService.findAllByName(name);
+        return list;
     }
 
     @GetMapping(value = "all")
@@ -40,4 +49,18 @@ public class ProductsController {
     private List<ProductStockDetails> findAllStock(@RequestParam(name = "productId") Long productId){
         return stockDetailsService.findAllByProductId(productId);
     }
+
+    @GetMapping(value = "admin/all")
+    private List<ProductsAdminResponse> findAllForAdmin(@RequestParam(required = false, defaultValue = "") String searchText, @RequestParam String isPublish){
+        Boolean isPublishValue = null;
+        if (Arrays.asList("false", "true").contains(isPublish)){
+            isPublishValue = Boolean.valueOf(isPublish);
+        }
+        return productsService.findAllForAdmin(searchText, isPublishValue);
+    }
+    @GetMapping(value = "admin/details")
+    private ProductDetailsAdminResponse findDetailsForAdmin(@RequestParam Long productId){
+        return productsService.findDetailsForAdmin(productId);
+    }
+
 }

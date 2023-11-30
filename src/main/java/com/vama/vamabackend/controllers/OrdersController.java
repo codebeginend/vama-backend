@@ -2,6 +2,7 @@ package com.vama.vamabackend.controllers;
 
 import com.vama.vamabackend.models.order.CreateOrderRequest;
 import com.vama.vamabackend.models.order.OrderItemsResponse;
+import com.vama.vamabackend.models.order.OrdersAdminResponse;
 import com.vama.vamabackend.models.order.OrdersResponse;
 import com.vama.vamabackend.services.OrdersService;
 import lombok.AllArgsConstructor;
@@ -38,11 +39,27 @@ public class OrdersController {
 
     @GetMapping(value = "items/me/all")
     private List<OrderItemsResponse> getOrderItemsMe(@RequestParam Long orderId){
+        return ordersService.findAllOrderItemsByOrderIdMe(orderId);
+    }
+
+    @GetMapping(value = "admin/all")
+    private List<OrdersAdminResponse> getAllOrdersForAdmin(@RequestParam(required = false, defaultValue = "") String status,
+                                                           @RequestParam(required = false, defaultValue = "") String searchText){
+        return  ordersService.findAllForAdmin(status, searchText);
+    }
+
+    @GetMapping(value = "admin/get")
+    private OrdersAdminResponse getOneAdmin(@RequestParam Long orderId){
+        return ordersService.findByIdAdmin(orderId);
+    }
+
+    @GetMapping(value = "admin/items/all")
+    private List<OrderItemsResponse> findAllOrderItemsAdmin(@RequestParam Long orderId){
         return ordersService.findAllOrderItemsByOrderId(orderId);
     }
 
-    //    @GetMapping(value = "me/last")
-//    private OrdersResponse getLastMe(){
-//        return ordersService.findByIdMe(orderId);
-//    }
+    @GetMapping(value = "admin/all/clients")
+    private List<OrdersAdminResponse> findAllOrderByUserId(@RequestParam Long userId){
+        return ordersService.findAllByUserIdForAdmin(userId);
+    }
 }

@@ -5,6 +5,7 @@ create table orders(
     entrance character varying(255),
     delivery_type character varying(255),
     payment_type character varying(255),
+    payment_status character varying(255),
         CONSTRAINT orders_pkey PRIMARY KEY (id),
         CONSTRAINT order_items_with_users_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );

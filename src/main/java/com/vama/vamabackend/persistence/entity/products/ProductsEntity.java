@@ -42,4 +42,7 @@ public class ProductsEntity {
 
     @Column(name = "stock")
     private BigDecimal stock;
+
+    @Column(name = "is_published")
+    private boolean isPublished;
 }
