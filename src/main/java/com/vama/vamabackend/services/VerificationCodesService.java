@@ -43,6 +43,15 @@ public class VerificationCodesService {
     }
 
     public VerificationCodesCheckedSuccessResponse checkedCode(VerificationCodesCheckedRequest request) throws AuthenticationException {
+        // DEMO ACCOUNT
+        if (request.getPhoneNumber().equals("9260000009") && request.getCode().equals("1111")){
+            UserEntity userEntity = usersRepository.findByUsername(request.getPhoneNumber());
+            RoleEntity role = rolesRepository.findById(userEntity.getRoleId()).orElse(null);
+            String jwtToken = jwtTokenProvider.createToken(userEntity.getUsername(), role.getName());
+            VerificationCodesCheckedSuccessResponse response = new VerificationCodesCheckedSuccessResponse();
+            response.setJwtToken(jwtToken);
+            return response;
+        }
         VerificationCodesEntity lastCode = repository.findLastByPhoneNumber(request.getPhoneNumber());
         if (lastCode == null){
             throw new AuthenticationCredentialsNotFoundException("Dont checked code");
