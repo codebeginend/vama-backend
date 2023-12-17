@@ -37,4 +37,16 @@ public class UserAccountService {
         userRepository.save(user);
         return getUserAccount();
     }
+
+    public void removeAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity user = userDetailsService.findByUsername(username);
+        user.setName("Удаленный аккаунт");
+        user.setEmail(null);
+        user.setUsername(user.getId().toString());
+        user.setActive(false);
+        user.setDelete(true);
+        userRepository.save(user);
+    }
 }

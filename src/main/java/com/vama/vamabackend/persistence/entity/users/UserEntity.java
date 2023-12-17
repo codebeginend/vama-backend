@@ -34,4 +34,9 @@ public class UserEntity {
     @Column(name = "role_id", insertable = true, updatable = true)
     private Long roleId;
 
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    @Column(name = "is_delete")
+    private boolean isDelete;
 }

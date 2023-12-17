@@ -1,9 +1,6 @@
 package com.vama.vamabackend.services;
 
-import com.vama.vamabackend.models.order.CreateOrderRequest;
-import com.vama.vamabackend.models.order.OrderItemsResponse;
-import com.vama.vamabackend.models.order.OrdersAdminResponse;
-import com.vama.vamabackend.models.order.OrdersResponse;
+import com.vama.vamabackend.models.order.*;
 import com.vama.vamabackend.persistence.entity.orders.OrderItemsEntity;
 import com.vama.vamabackend.persistence.entity.orders.OrderStatusesEntity;
 import com.vama.vamabackend.persistence.entity.orders.OrderStatusesEnum;
@@ -14,7 +11,6 @@ import com.vama.vamabackend.persistence.repository.*;
 import com.vama.vamabackend.persistence.repository.types.OrdersAdminType;
 import com.vama.vamabackend.persistence.repository.types.OrdersType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -171,6 +167,7 @@ public class OrdersService {
         return response;
     }
 
+    // Текущий заказ на жкране профиль
     public OrdersResponse findLastMe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -222,5 +219,83 @@ public class OrdersService {
         return response;
     }
 
+    public void  adminChangeStatus(Long orderId, OrderStatusesEnum status) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userDetailsService.findByUsername(username);
 
+        boolean isAllowUpdate = false;
+        Optional<OrdersEntity> ordersEntity = ordersRepository.findById(orderId);
+        if (ordersEntity.isEmpty()){
+//            return null;
+        }
+        OrderStatusesEntity orderStatus = orderStatusesRepository.findLastByOrderId(ordersEntity.get().getId());
+
+        switch (status){
+            case CREATED:
+                if (orderStatus == null){
+                    isAllowUpdate = true;
+                }
+                break;
+            case ACCEPT:
+                if (orderStatus.getName().equals(OrderStatusesEnum.CREATED)){
+                    isAllowUpdate = true;
+                }
+                break;
+            case DELIVERED:
+                if (orderStatus.getName().equals(OrderStatusesEnum.ACCEPT)){
+                    isAllowUpdate = true;
+                }
+                break;
+            case COMPLETED:
+                if (orderStatus.getName().equals(OrderStatusesEnum.DELIVERED)){
+                    isAllowUpdate = true;
+                }
+                break;
+            case CANCELLED:
+                if (orderStatus.getName().equals(OrderStatusesEnum.CREATED) || orderStatus.getName().equals(OrderStatusesEnum.ACCEPT)){
+                    isAllowUpdate = true;
+                }
+                break;
+        }
+
+        if (isAllowUpdate){
+            OrderStatusesEntity orderStatusesEntity = new OrderStatusesEntity();
+            orderStatusesEntity.setName(status);
+            orderStatusesEntity.setOrderId(orderId);
+            orderStatusesEntity.setUserId(userEntity.getId());
+            orderStatusesRepository.save(orderStatusesEntity);
+        }
+    }
+
+    public ChangeStatusResponse changeStatus(Long orderId, OrderStatusesEnum status) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity userEntity = userDetailsService.findByUsername(username);
+
+        boolean isAllowUpdate = false;
+        Optional<OrdersEntity> ordersEntity = ordersRepository.findById(orderId);
+
+        if (!ordersEntity.isEmpty() && ordersEntity.get().getUserId() == userEntity.getId()){
+            OrderStatusesEntity orderStatus = orderStatusesRepository.findLastByOrderId(ordersEntity.get().getId());
+            switch (status){
+                case CANCELLED:
+                    if (orderStatus.getName().equals(OrderStatusesEnum.CREATED) || orderStatus.getName().equals(OrderStatusesEnum.ACCEPT)){
+                        isAllowUpdate = true;
+                    }
+                    break;
+            }
+            if (isAllowUpdate){
+                OrderStatusesEntity orderStatusesEntity = new OrderStatusesEntity();
+                orderStatusesEntity.setName(status);
+                orderStatusesEntity.setOrderId(orderId);
+                orderStatusesEntity.setUserId(userEntity.getId());
+                OrderStatusesEntity statusesEntity = orderStatusesRepository.save(orderStatusesEntity);
+                return ChangeStatusResponse.builder().orderId(orderId)
+                        .name(status)
+                        .createdAt(statusesEntity.getCreatedAt()).build();
+            }
+        }
+        return null;
+    }
 }

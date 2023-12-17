@@ -1,13 +1,11 @@
 package com.vama.vamabackend.controllers;
 
-import com.vama.vamabackend.models.order.CreateOrderRequest;
-import com.vama.vamabackend.models.order.OrderItemsResponse;
-import com.vama.vamabackend.models.order.OrdersAdminResponse;
-import com.vama.vamabackend.models.order.OrdersResponse;
+import com.vama.vamabackend.models.order.*;
 import com.vama.vamabackend.services.OrdersService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.NotContextException;
 import java.util.List;
 
 @RestController
@@ -20,6 +18,11 @@ public class OrdersController {
     @PostMapping(value = "create")
     private void createOrder(@RequestBody CreateOrderRequest request){
         ordersService.createOrder(request);
+    }
+
+    @PostMapping(value = "change/status")
+    private ChangeStatusResponse createOrder(@RequestBody ChangeStatusRequest request) {
+        return ordersService.changeStatus(request.getOrderId(), request.getNextStatus());
     }
 
     @GetMapping(value = "me/all")

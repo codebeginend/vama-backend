@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/clients/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/catalogs/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/search/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/geolocate/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
