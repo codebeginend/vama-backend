@@ -78,6 +78,7 @@ CREATE TYPE products_admin_type AS (
     unitValue decimal,
     stock numeric,
     price decimal,
+    opt_price decimal,
     categoryName character varying(255)
 );
 
@@ -93,10 +94,11 @@ BEGIN
                      product.unit_value,
                      product.stock,
                      product.price,
+                     product.opt_price,
                      category.name as category
                  from products product
                           left join categories category on product.category_id = category.id
-                 where (product.code::text ||' '|| product.name ||' '|| product.unit_value::text ||' '|| product.stock::text ||' '|| product.price::text ||' '|| category.name) ilike searchText;
+                 where product.*::text ilike searchText;
 END;
 $$ LANGUAGE plpgsql;
 

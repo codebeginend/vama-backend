@@ -1,7 +1,6 @@
 package com.vama.vamabackend.controllers;
 
-import com.vama.vamabackend.models.products.ProductDetailsAdminResponse;
-import com.vama.vamabackend.models.products.ProductsAdminResponse;
+import com.vama.vamabackend.models.products.*;
 import com.vama.vamabackend.persistence.entity.products.ProductStockDetails;
 import com.vama.vamabackend.persistence.entity.products.ProductsEntity;
 import com.vama.vamabackend.services.ProductStockDetailsService;
@@ -63,4 +62,13 @@ public class ProductsController {
         return productsService.findDetailsForAdmin(productId);
     }
 
+    @PostMapping(value = "admin/publish")
+    private PublishProductResponse publishProduct(@RequestBody PublishProductRequest request){
+        return productsService.publishProduct(request);
+    }
+
+    @PostMapping(value = "admin/update")
+    private ProductDetailsAdminResponse update(@RequestBody UpdateProductDetailsRequest request){
+        return productsService.update(request);
+    }
 }

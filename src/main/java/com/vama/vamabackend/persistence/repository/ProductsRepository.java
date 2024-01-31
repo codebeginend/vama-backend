@@ -16,4 +16,7 @@ public interface ProductsRepository extends JpaRepository<ProductsEntity, Long> 
 
     @Query("select product from ProductsEntity product where UPPER(product.name) LIKE :name")
     List<ProductsEntity> findAllByName(String name);
+
+    @Query("select product from ProductsEntity product where UPPER(product.code) LIKE :code")
+    ProductsEntity findAllByCode(String code);
 }

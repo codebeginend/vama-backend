@@ -42,12 +42,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("*", "/verification/code/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/products/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/products/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/categories/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/orders/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/clients/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/catalogs/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/search/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/geolocate/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }

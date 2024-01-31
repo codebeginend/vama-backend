@@ -26,9 +26,4 @@ public class VerificationCodesController {
     public VerificationCodesCheckedSuccessResponse codeChecked(@RequestBody VerificationCodesCheckedRequest request) throws AuthenticationException {
         return service.checkedCode(request);
     }
-
-    @GetMapping
-    public String test(){
-        return "TEST";
-    }
 }

@@ -12,4 +12,7 @@ public interface CategoriesRepository extends JpaRepository<CategoriesEntity, Lo
 
     @Query("select c from CategoriesEntity c where c.parentId is null ")
     List<CategoriesEntity> findAllByParentIdIsNull();
+
+    @Query("select c from CategoriesEntity c where c.parentId = :id ")
+    List<CategoriesEntity> findAllByParentId(Integer id);
 }

@@ -1,9 +1,11 @@
 package com.vama.vamabackend.services;
 
-import com.vama.vamabackend.models.products.ProductDetailsAdminResponse;
-import com.vama.vamabackend.models.products.ProductsAdminResponse;
+import com.vama.vamabackend.models.NomenclatureMessage;
+import com.vama.vamabackend.models.products.*;
 import com.vama.vamabackend.persistence.entity.categories.CategoriesEntity;
 import com.vama.vamabackend.persistence.entity.products.ProductsEntity;
+import com.vama.vamabackend.persistence.entity.products.UnitEnum;
+import com.vama.vamabackend.persistence.entity.products.UnitTypesEnum;
 import com.vama.vamabackend.persistence.repository.CategoriesRepository;
 import com.vama.vamabackend.persistence.repository.ProductsJdbcRepository;
 import com.vama.vamabackend.persistence.repository.ProductsRepository;
@@ -11,10 +13,7 @@ import com.vama.vamabackend.persistence.repository.types.ProductsAdminType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +58,7 @@ public class ProductsService {
                 .name(m.getName())
                 .categoryName(m.getCategoryName())
                 .price(m.getPrice())
+                .optPrice(m.getOptPrice())
                 .stock(m.getStock())
                 .unitType(m.getUnitType())
                 .unitValue(m.getUnitValue())
@@ -68,7 +68,10 @@ public class ProductsService {
 
     public ProductDetailsAdminResponse findDetailsForAdmin(Long id){
         ProductsEntity entity = productsRepository.findById(id).orElse(null);
-        CategoriesEntity categoriesEntity = categoriesRepository.findById(entity.getCategoryId()).orElse(null);
+        CategoriesEntity categoriesEntity = null;
+        if (entity.getCategoryId() != null){
+            categoriesEntity = categoriesRepository.findById(entity.getCategoryId()).orElse(null);
+        }
         ProductDetailsAdminResponse response = ProductDetailsAdminResponse.builder()
                 .id(entity.getId())
                 .code(entity.getCode())
@@ -76,16 +79,90 @@ public class ProductsService {
                 .name(entity.getName())
                  .description(entity.getDescription())
                 .price(entity.getPrice())
+                .optPrice(entity.getOptPrice())
                 .discount(entity.getDiscount())
                 .stock(entity.getStock().intValue())
-                .unit(entity.getUnit().name())
-                .unitType(entity.getUnitType().name())
                 .unitValue(entity.getUnitValue())
                 .build();
+        if (entity.getUnit() != null){
+            response.setUnit(entity.getUnit().name());
+        }
+        if (entity.getUnitType() != null){
+            response.setUnitType(entity.getUnitType().name());
+        }
+
          if (categoriesEntity != null){
              response.setCategoryName(categoriesEntity.getName());
              response.setCategoryId(categoriesEntity.getId());
          }
         return response;
+    }
+
+    public void updateProducts(List<NomenclatureMessage> nomenclatures){
+        nomenclatures.stream().forEach((val) -> {
+            ProductsEntity entity = productsRepository.findAllByCode(val.getCode());
+            if (entity != null){
+                if (val.isUpdateProduct()){
+                    entity.setName(val.getProductName());
+                }
+                if(val.isUpdatePrice()){
+                    entity.setPrice(val.getPrice());
+                }
+                if (val.isUpdateStock()){
+                    entity.setStock(val.getStock());
+                }
+            }else {
+                entity = new ProductsEntity();
+                entity.setCode(val.getCode());
+                entity.setName(val.getProductName());
+                entity.setOptPrice(val.getPrice());
+                entity.setStock(val.getStock());
+            }
+            productsRepository.save(entity);
+        });
+    }
+
+    public PublishProductResponse publishProduct(PublishProductRequest request){
+        Optional<ProductsEntity> entity = productsRepository.findById(request.getProductId());
+        if (!entity.isEmpty()){
+            ProductsEntity update = entity.get();
+            update.setPublished(request.isPublish());
+            productsRepository.save(update);
+            return PublishProductResponse.builder()
+                    .productId(update.getId())
+                    .isPublish(update.isPublished()).build();
+        }
+        return null;
+    }
+
+    public ProductDetailsAdminResponse update(UpdateProductDetailsRequest request){
+        Optional<ProductsEntity> entity = productsRepository.findById(request.getProductId());
+        if (!entity.isEmpty()){
+            ProductsEntity update = entity.get();
+            if (request.getIsUpdateName()){
+                update.setName(request.getName());
+            }
+            if (request.getIsUpdateDescription()){
+                update.setDescription(request.getDescription());
+            }
+            if (request.getIsUpdatePrice()){
+                update.setPrice(request.getPrice());
+            }
+            if (request.getIsUpdateStock()){
+                update.setStock(request.getStock());
+            }
+            if (request.getIsUpdateUnit()){
+                update.setUnit(UnitEnum.valueOf(request.getUnit()));
+            }
+            if (request.getIsUpdateUnitType()){
+                update.setUnitType(UnitTypesEnum.valueOf(request.getUnitType()));
+            }
+            if (request.getIsUpdateCategory()){
+                update.setCategoryId(request.getCategoryId());
+            }
+            productsRepository.save(update);
+            return findDetailsForAdmin(request.getProductId());
+        }
+        return null;
     }
 }

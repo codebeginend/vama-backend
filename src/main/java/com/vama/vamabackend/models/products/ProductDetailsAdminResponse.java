@@ -18,6 +18,7 @@ public class ProductDetailsAdminResponse {
     private BigDecimal unitValue;
     private int stock;
     private BigDecimal price;
+    private BigDecimal optPrice;
     private BigDecimal discount;
     private String categoryName;
     private Long categoryId;

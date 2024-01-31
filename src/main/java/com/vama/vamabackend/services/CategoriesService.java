@@ -1,6 +1,7 @@
 package com.vama.vamabackend.services;
 
 import com.vama.vamabackend.models.categories.CategoriesAdminResponse;
+import com.vama.vamabackend.models.categories.CategoriesForProduct;
 import com.vama.vamabackend.models.products.ProductsAdminResponse;
 import com.vama.vamabackend.persistence.entity.categories.CategoriesEntity;
 import com.vama.vamabackend.persistence.repository.CategoriesJdbcRepository;
@@ -10,6 +11,7 @@ import com.vama.vamabackend.persistence.repository.types.ProductsAdminType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +29,11 @@ public class CategoriesService {
         return categoriesEntities;
     }
 
+    public List<CategoriesForProduct> findAllForProduct(List<Long> id) {
+        List<CategoriesForProduct> categoriesEntities = jdbcRepository.getAllForProduct(id);
+        return categoriesEntities;
+    }
+
     public List<CategoriesAdminResponse> findAllForAdmin(String searchText, Boolean isPublish){
         List<CategoriesAdminType> typeList = jdbcRepository.getAllForAdmin(searchText, isPublish);
 
@@ -39,6 +46,15 @@ public class CategoriesService {
                 .totalProducts(m.getTotalProducts())
                 .build()).collect(Collectors.toList());
         return response;
+    }
+
+    public List<CategoriesEntity> findAllByParentId(Integer parentId){
+        List<CategoriesEntity> list = new ArrayList<>();
+        if (parentId == null){
+            return categoriesRepository.findAllByParentIdIsNull();
+        }else {
+            return categoriesRepository.findAllByParentId(parentId);
+        }
     }
 
     public CategoriesAdminResponse findDetailsForAdmin(Long categoryId){

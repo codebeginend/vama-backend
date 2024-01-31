@@ -37,6 +37,9 @@ public class ProductsEntity {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "opt_price")
+    private BigDecimal optPrice;
+
     @Column(name = "discount")
     private BigDecimal discount;
 
