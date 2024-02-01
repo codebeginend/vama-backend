@@ -17,7 +17,7 @@ public class RabbitMQJsonConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQJsonConsumer.class);
 
-    @RabbitListener(queues = {"${rabbitmq.queue.json.name}"})
+    @RabbitListener(queues = {"products"})
     public void consumeJsonMessage(List<NomenclatureMessage> message){
         productsService.updateProducts(message);
         LOGGER.info(String.format("Received JSON message size -> %s", message.size()));
