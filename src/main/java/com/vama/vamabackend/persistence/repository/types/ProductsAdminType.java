@@ -13,7 +13,7 @@ public class ProductsAdminType {
     private String name;
     private String unitType;
     private BigDecimal unitValue;
-    private int stock;
+    private BigDecimal stock;
     private BigDecimal price;
     private BigDecimal optPrice;
     private String categoryName;
