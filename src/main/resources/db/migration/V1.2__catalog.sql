@@ -12,7 +12,7 @@ create table products(
     code character varying(20),
     logo character varying(255),
     description character varying(255),
-    category_id bigserial,
+    category_id BIGINT,
     unit character varying(255),
     unit_type character varying(255),
     unit_value decimal,

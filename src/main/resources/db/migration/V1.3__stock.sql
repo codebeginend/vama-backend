@@ -3,7 +3,7 @@ create table product_stock_details(
     price decimal,
     discount decimal,
     stock decimal,
-    product_id bigserial,
+    product_id BIGINT,
         CONSTRAINT product_stock_details_pkey PRIMARY KEY (id),
         CONSTRAINT product_stock_details_with_products_fk FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 );
