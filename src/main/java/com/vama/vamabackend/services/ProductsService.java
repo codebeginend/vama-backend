@@ -11,6 +11,7 @@ import com.vama.vamabackend.persistence.repository.ProductsJdbcRepository;
 import com.vama.vamabackend.persistence.repository.ProductsRepository;
 import com.vama.vamabackend.persistence.repository.types.ProductsAdminType;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -72,18 +73,7 @@ public class ProductsService {
         if (entity.getCategoryId() != null){
             categoriesEntity = categoriesRepository.findById(entity.getCategoryId()).orElse(null);
         }
-        ProductDetailsAdminResponse response = ProductDetailsAdminResponse.builder()
-                .id(entity.getId())
-                .code(entity.getCode())
-                .isPublished(entity.isPublished())
-                .name(entity.getName())
-                 .description(entity.getDescription())
-                .price(entity.getPrice())
-                .optPrice(entity.getOptPrice())
-                .discount(entity.getDiscount())
-                .stock(entity.getStock().intValue())
-                .unitValue(entity.getUnitValue())
-                .build();
+        ProductDetailsAdminResponse response = dtoDetails(entity);
         if (entity.getUnit() != null){
             response.setUnit(entity.getUnit().name());
         }
@@ -116,6 +106,7 @@ public class ProductsService {
                 entity.setCode(val.getCode());
                 entity.setName(val.getProductName());
                 entity.setOptPrice(val.getPrice());
+                entity.setPrice(val.getPrice());
                 entity.setStock(val.getStock());
             }
             productsRepository.save(entity);
@@ -164,5 +155,100 @@ public class ProductsService {
             return findDetailsForAdmin(request.getProductId());
         }
         return null;
+    }
+
+    public ProductDetailsAdminResponse changePopular(Long productId) {
+        Optional<ProductsEntity> entity = productsRepository.findById(productId);
+        if (entity.isEmpty()){
+            throw new NullPointerException();
+        }
+        ProductsEntity updateEntity = entity.get();
+        updateEntity.setPopular(!updateEntity.isPopular());
+        return dtoDetails(productsRepository.save(updateEntity));
+    }
+
+    public ProductDetailsAdminResponse dtoDetails(ProductsEntity entity){
+        ProductDetailsAdminResponse response = ProductDetailsAdminResponse.builder()
+                .id(entity.getId())
+                .code(entity.getCode())
+                .isPublished(entity.isPublished())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
+                .optPrice(entity.getOptPrice())
+                .discount(entity.getDiscount())
+                .stock(entity.getStock().intValue())
+                .unitValue(entity.getUnitValue())
+                .isPopular(entity.isPopular())
+                .logo(entity.getLogo())
+                .unionProducts(entity.getUnionProducts())
+                .build();
+        return response;
+    }
+
+    public List<ProductsEntity> findAllPopular() {
+        List<ProductsEntity> list = productsRepository.findAllByPopularIsTrue();
+        return list;
+    }
+
+    public List<ProductsEntity> productsByCategoryAndNull(Long categoryId, String searchText) {
+        return productsRepository.findAllByCategoryIdOrCategoryIdIsNullAndNameLike(categoryId, searchText.toUpperCase());
+    }
+
+    public ProductsEntity changeCategory(Long productId, Long categoryId) {
+        ProductsEntity entity = productsRepository.findById(productId).orElse(null);
+        if (entity == null){
+            return null;
+        }
+        if (entity.getCategoryId() == categoryId){
+            entity.setCategoryId(null);
+        }else {
+            entity.setCategoryId(categoryId);
+        }
+        productsRepository.save(entity);
+        return entity;
+    }
+
+    public List<ProductsEntity> productsByCategory(Long categoryId) {
+        List<ProductsEntity> list = productsRepository.findAllByCategoryId(categoryId);
+        return list;
+    }
+
+    public List<ProductsEntity> findAllUnion(Long productId) {
+        ProductsEntity entity = productsRepository.findById(productId).orElse(null);
+        if (entity == null){
+            return null;
+        }
+        List<ProductsEntity> unionProducts = productsRepository.findAllByIdIn(entity.getUnionProducts());
+        return unionProducts;
+    }
+
+    public List<ProductsEntity> findAllForUnion(String searchText) {
+        return productsRepository.findAllForUnion(searchText.toUpperCase());
+    }
+
+    public ProductDetailsAdminResponse changeUnion(Long productId, Long unionProductId) {
+        ProductsEntity entity = productsRepository.findById(productId).orElse(null);
+        if (Arrays.asList(entity.getUnionProducts()).contains(unionProductId)) {
+            Long[] unionsArray = new Long[(entity.getUnionProducts().length - 1)];
+            int index = 0;
+            for (int x = 0; x < entity.getUnionProducts().length; x++){
+                if (entity.getUnionProducts()[x] != unionProductId){
+                    unionsArray[index] = entity.getUnionProducts()[x];
+                    index++;
+                }
+            }
+            entity.setUnionProducts(unionsArray);
+        }else {
+            Long[] unionsArray = new Long[(entity.getUnionProducts().length + 1)];
+            for (int x = 0; x < entity.getUnionProducts().length; x++){
+                    unionsArray[x] = entity.getUnionProducts()[x];
+            }
+            unionsArray[entity.getUnionProducts().length] = unionProductId;
+            entity.setUnionProducts(unionsArray);
+        }
+
+        productsRepository.save(entity);
+        return findDetailsForAdmin(productId);
     }
 }

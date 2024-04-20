@@ -2,14 +2,13 @@ package com.vama.vamabackend.controllers;
 
 import com.vama.vamabackend.models.categories.CategoriesAdminResponse;
 import com.vama.vamabackend.models.categories.CategoriesForProduct;
+import com.vama.vamabackend.models.categories.CreateCategoryRequest;
+import com.vama.vamabackend.models.categories.UpdateCategoryRequest;
 import com.vama.vamabackend.persistence.entity.categories.CategoriesEntity;
 import com.vama.vamabackend.services.CategoriesService;
 import com.vama.vamabackend.services.ProductStockDetailsService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +35,21 @@ public class CategoriesController {
         return categoriesService.findAllForAdmin(searchText, isPublishValue);
     }
 
+    @PostMapping(value = "admin/create")
+    private CategoriesAdminResponse create(@RequestBody CreateCategoryRequest request){
+        return categoriesService.create(request);
+    }
+
+    @PatchMapping(value = "admin/update/name")
+    private CategoriesAdminResponse create(@RequestBody UpdateCategoryRequest request, @RequestParam Long categoryId){
+        return categoriesService.updateName(request, categoryId);
+    }
+
+    @DeleteMapping(value = "admin/delete")
+    private void delete(@RequestParam Long categoryId){
+        categoriesService.delete(categoryId);
+    }
+
     @GetMapping(value = "admin/parent/all")
     private List<CategoriesEntity> findAllForAdminByParentId(@RequestParam() String parentId){
         Integer id = null;
@@ -59,5 +73,10 @@ public class CategoriesController {
     @GetMapping(value = "admin/details")
     private CategoriesAdminResponse findDetailsForAdmin(@RequestParam Long id){
         return categoriesService.findDetailsForAdmin(id);
+    }
+
+    @PatchMapping(value = "admin/change/publish")
+    private CategoriesAdminResponse changePublish(@RequestParam Long categoryId){
+        return categoriesService.changePublish(categoryId);
     }
 }

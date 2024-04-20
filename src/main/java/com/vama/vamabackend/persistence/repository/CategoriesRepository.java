@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface CategoriesRepository extends JpaRepository<CategoriesEntity, Long> {
 
-    @Query("select c from CategoriesEntity c where c.parentId is null ")
+    @Query("select c from CategoriesEntity c where c.parentId is null and c.isPublished is true")
     List<CategoriesEntity> findAllByParentIdIsNull();
 
     @Query("select c from CategoriesEntity c where c.parentId = :id ")

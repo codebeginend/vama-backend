@@ -35,7 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         JwtTokenFilter customFilter = new JwtTokenFilter(jwtTokenProvider);
 
         http.csrf().disable().cors().and()
-
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic().disable()
                 .exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED)).and()
@@ -43,13 +42,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("*", "/verification/code/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/products/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/products/**").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/products/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/categories/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/categories/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/categories/**").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/categories/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/orders/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/orders/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/clients/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/catalogs/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/search/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/geolocate/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/delivery/**").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/delivery/**").permitAll()
+                .antMatchers("*", "/images/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }

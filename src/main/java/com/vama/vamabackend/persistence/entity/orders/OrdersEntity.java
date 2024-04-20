@@ -1,8 +1,11 @@
 package com.vama.vamabackend.persistence.entity.orders;
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -32,4 +35,11 @@ public class OrdersEntity {
 
     @Column(name = "payment_status")
     private String paymentStatus;
+
+    @Column(name = "delivery_date")
+    private LocalDate deliveryDate;
+
+    @Column(name = "delivery_time")
+    @Type(type = "com.vama.vamabackend.persistence.entity.orders.LocalTimeOneArrayType")
+    private LocalTime[] deliveryTime;
 }

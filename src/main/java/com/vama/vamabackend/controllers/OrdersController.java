@@ -21,9 +21,15 @@ public class OrdersController {
     }
 
     @PostMapping(value = "change/status")
-    private ChangeStatusResponse createOrder(@RequestBody ChangeStatusRequest request) {
+    private ChangeStatusResponse changeCancelledOrder(@RequestBody ChangeStatusRequest request) {
+        return ordersService.changeToCancelledStatus(request.getOrderId(), request.getNextStatus());
+    }
+
+    @PostMapping(value = "/admin/change/status")
+    private ChangeStatusResponse adminChangeStatusOrder(@RequestBody ChangeStatusRequest request) {
         return ordersService.changeStatus(request.getOrderId(), request.getNextStatus());
     }
+
 
     @GetMapping(value = "me/all")
     private List<OrdersResponse> getAllMe(){

@@ -2,6 +2,8 @@ package com.vama.vamabackend.services;
 
 import com.vama.vamabackend.models.categories.CategoriesAdminResponse;
 import com.vama.vamabackend.models.categories.CategoriesForProduct;
+import com.vama.vamabackend.models.categories.CreateCategoryRequest;
+import com.vama.vamabackend.models.categories.UpdateCategoryRequest;
 import com.vama.vamabackend.models.products.ProductsAdminResponse;
 import com.vama.vamabackend.persistence.entity.categories.CategoriesEntity;
 import com.vama.vamabackend.persistence.repository.CategoriesJdbcRepository;
@@ -78,6 +80,37 @@ public class CategoriesService {
             text = text.replace("{", "").replace("}", "").replace("\"", "");
             String[] array = text.split(",");
             return Arrays.asList(array);
+        }
+        return null;
+    }
+
+    public CategoriesAdminResponse create(CreateCategoryRequest request) {
+        CategoriesEntity entity = new CategoriesEntity();
+        entity.setName(request.getName());
+        categoriesRepository.save(entity);
+        return findDetailsForAdmin(entity.getId());
+    }
+
+    public void delete(Long categoryId) {
+        categoriesRepository.deleteById(categoryId);
+    }
+
+    public CategoriesAdminResponse updateName(UpdateCategoryRequest request, Long categoryId) {
+        CategoriesEntity entity = categoriesRepository.findById(categoryId).orElse(null);
+        if (entity == null){
+            return null;
+        }
+        entity.setName(request.getName());
+        categoriesRepository.save(entity);
+        return findDetailsForAdmin(categoryId);
+    }
+
+    public CategoriesAdminResponse changePublish(Long categoryId) {
+        CategoriesEntity entity = categoriesRepository.findById(categoryId).orElse(null);
+        if (entity != null){
+            entity.setPublished(!entity.isPublished());
+            categoriesRepository.save(entity);
+            return findDetailsForAdmin(categoryId);
         }
         return null;
     }

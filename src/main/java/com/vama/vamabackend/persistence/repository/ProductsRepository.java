@@ -19,4 +19,16 @@ public interface ProductsRepository extends JpaRepository<ProductsEntity, Long> 
 
     @Query("select product from ProductsEntity product where UPPER(product.code) LIKE :code")
     ProductsEntity findAllByCode(String code);
+
+    @Query("select product from ProductsEntity product where product.isPopular = true")
+    List<ProductsEntity> findAllByPopularIsTrue();
+
+    @Query("select product from ProductsEntity product where (product.categoryId = :categoryId or product.categoryId is null) and upper(product.name) like %:searchText%")
+    List<ProductsEntity> findAllByCategoryIdOrCategoryIdIsNullAndNameLike(Long categoryId, String searchText);
+
+    List<ProductsEntity> findAllByIdIn(Long[] unionProducts);
+
+    @Query("select product from ProductsEntity product where upper(product.name) like %:searchText%")
+    List<ProductsEntity> findAllForUnion(String searchText);
+
 }

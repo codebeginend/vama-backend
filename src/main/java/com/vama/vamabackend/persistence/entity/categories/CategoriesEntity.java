@@ -20,4 +20,7 @@ public class CategoriesEntity {
     @OneToMany
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
     private List<CategoriesEntity> child;
+
+    @Column(name = "is_published")
+    private boolean isPublished;
 }

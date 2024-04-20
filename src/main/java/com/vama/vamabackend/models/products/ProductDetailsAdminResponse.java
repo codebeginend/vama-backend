@@ -22,4 +22,7 @@ public class ProductDetailsAdminResponse {
     private BigDecimal discount;
     private String categoryName;
     private Long categoryId;
+    private Boolean isPopular;
+    private String logo;
+    private Long[] unionProducts;
 }

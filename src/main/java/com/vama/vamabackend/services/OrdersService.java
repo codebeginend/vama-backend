@@ -1,10 +1,7 @@
 package com.vama.vamabackend.services;
 
 import com.vama.vamabackend.models.order.*;
-import com.vama.vamabackend.persistence.entity.orders.OrderItemsEntity;
-import com.vama.vamabackend.persistence.entity.orders.OrderStatusesEntity;
-import com.vama.vamabackend.persistence.entity.orders.OrderStatusesEnum;
-import com.vama.vamabackend.persistence.entity.orders.OrdersEntity;
+import com.vama.vamabackend.persistence.entity.orders.*;
 import com.vama.vamabackend.persistence.entity.products.ProductsEntity;
 import com.vama.vamabackend.persistence.entity.users.UserEntity;
 import com.vama.vamabackend.persistence.repository.*;
@@ -17,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,6 +41,10 @@ public class OrdersService {
         orders.setEntrance(request.getEntrance());
         orders.setDeliveryType(request.getDeliveryType());
         orders.setPaymentType(request.getPaymentType());
+        if (request.getDeliveryType().equals(DeliveryTypeEnum.FAST)){
+            orders.setDeliveryDate(request.getDeliveryDate());
+            orders.setDeliveryTime(request.getDeliveryTime());
+        }
         ordersRepository.save(orders);
         OrderStatusesEntity orderStatusesEntity = new OrderStatusesEntity();
         orderStatusesEntity.setName(OrderStatusesEnum.CREATED);
@@ -268,12 +270,11 @@ public class OrdersService {
         }
     }
 
-    public ChangeStatusResponse changeStatus(Long orderId, OrderStatusesEnum status) {
+    public ChangeStatusResponse changeToCancelledStatus(Long orderId, OrderStatusesEnum status) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserEntity userEntity = userDetailsService.findByUsername(username);
-
-        boolean isAllowUpdate = false;
+        boolean isCancelled = false;
         Optional<OrdersEntity> ordersEntity = ordersRepository.findById(orderId);
 
         if (!ordersEntity.isEmpty() && ordersEntity.get().getUserId() == userEntity.getId()){
@@ -281,11 +282,11 @@ public class OrdersService {
             switch (status){
                 case CANCELLED:
                     if (orderStatus.getName().equals(OrderStatusesEnum.CREATED) || orderStatus.getName().equals(OrderStatusesEnum.ACCEPT)){
-                        isAllowUpdate = true;
+                        isCancelled = true;
                     }
                     break;
             }
-            if (isAllowUpdate){
+            if (isCancelled){
                 OrderStatusesEntity orderStatusesEntity = new OrderStatusesEntity();
                 orderStatusesEntity.setName(status);
                 orderStatusesEntity.setOrderId(orderId);
@@ -295,6 +296,44 @@ public class OrdersService {
                         .name(status)
                         .createdAt(statusesEntity.getCreatedAt()).build();
             }
+        }
+        return null;
+    }
+
+    public ChangeStatusResponse changeStatus(Long orderId, OrderStatusesEnum status) {
+        Optional<OrdersEntity> ordersEntity = ordersRepository.findById(orderId);
+        OrderStatusesEntity orderStatus = orderStatusesRepository.findLastByOrderId(ordersEntity.get().getId());
+        boolean isUpdate = false;
+        switch (status){
+            case ACCEPT:
+                if (orderStatus.getName().equals(OrderStatusesEnum.CREATED)){
+                    isUpdate = true;
+                }
+                break;
+            case DELIVERED:
+                if (orderStatus.getName().equals(OrderStatusesEnum.ACCEPT)){
+                    isUpdate = true;
+                }
+                break;
+            case COMPLETED:
+                if (orderStatus.getName().equals(OrderStatusesEnum.DELIVERED) || orderStatus.getName().equals(OrderStatusesEnum.ACCEPT)){
+                    isUpdate = true;
+                }
+                break;
+            case CANCELLED:
+                if (orderStatus.getName().equals(OrderStatusesEnum.CREATED) || orderStatus.getName().equals(OrderStatusesEnum.ACCEPT) || orderStatus.getName().equals(OrderStatusesEnum.DELIVERED)){
+                    isUpdate = true;
+                }
+                break;
+        }
+        if (isUpdate){
+            OrderStatusesEntity orderStatusesEntity = new OrderStatusesEntity();
+            orderStatusesEntity.setName(status);
+            orderStatusesEntity.setOrderId(orderId);
+            OrderStatusesEntity statusesEntity = orderStatusesRepository.save(orderStatusesEntity);
+            return ChangeStatusResponse.builder().orderId(orderId)
+                    .name(status)
+                    .createdAt(statusesEntity.getCreatedAt()).build();
         }
         return null;
     }

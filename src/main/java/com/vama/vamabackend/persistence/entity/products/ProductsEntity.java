@@ -1,9 +1,12 @@
 package com.vama.vamabackend.persistence.entity.products;
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.List;
 
 @Data
 @Entity
@@ -48,4 +51,11 @@ public class ProductsEntity {
 
     @Column(name = "is_published")
     private boolean isPublished;
+
+    @Column(name = "is_popular")
+    private boolean isPopular;
+
+    @Column(name = "union_products")
+    @Type(type = "com.vama.vamabackend.persistence.entity.products.BigIntegerOneArrayType")
+    private Long[] unionProducts;
 }
