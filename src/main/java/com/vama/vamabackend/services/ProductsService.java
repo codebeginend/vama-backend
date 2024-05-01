@@ -11,9 +11,9 @@ import com.vama.vamabackend.persistence.repository.ProductsJdbcRepository;
 import com.vama.vamabackend.persistence.repository.ProductsRepository;
 import com.vama.vamabackend.persistence.repository.types.ProductsAdminType;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,7 +107,7 @@ public class ProductsService {
                 entity.setName(val.getProductName());
                 entity.setOptPrice(val.getPrice());
                 entity.setPrice(val.getPrice());
-                entity.setStock(val.getStock());
+                entity.setStock(val.getStock() != null?val.getStock() : BigDecimal.ZERO);
             }
             productsRepository.save(entity);
         });

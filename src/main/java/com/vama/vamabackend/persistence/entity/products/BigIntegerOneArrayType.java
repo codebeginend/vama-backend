@@ -54,6 +54,9 @@ public class BigIntegerOneArrayType implements UserType {
             statement.setNull(index, SQL_TYPES[0]);
         } else {
             Long[] castObject = (Long[]) value;
+            if (castObject.length == 0){
+                castObject = new Long[0];
+            }
             statement.setArray(index,
                     session.connection().createArrayOf("bigint", castObject));
         }
