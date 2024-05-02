@@ -57,5 +57,5 @@ public class ProductsEntity {
 
     @Column(name = "union_products")
     @Type(type = "com.vama.vamabackend.persistence.entity.products.BigIntegerOneArrayType")
-    private Long[] unionProducts;
+    private Long[] unionProducts = new Long[0];
 }
