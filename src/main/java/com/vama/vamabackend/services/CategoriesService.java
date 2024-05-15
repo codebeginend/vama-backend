@@ -91,6 +91,14 @@ public class CategoriesService {
         return findDetailsForAdmin(entity.getId());
     }
 
+    public CategoriesEntity createSubCategory(CreateCategoryRequest request) {
+        CategoriesEntity entity = new CategoriesEntity();
+        entity.setName(request.getName());
+        entity.setParentId(request.getParentId());
+        categoriesRepository.save(entity);
+        return entity;
+    }
+
     public void delete(Long categoryId) {
         categoriesRepository.deleteById(categoryId);
     }

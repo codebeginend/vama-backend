@@ -40,6 +40,12 @@ public class CategoriesController {
         return categoriesService.create(request);
     }
 
+    @PostMapping(value = "admin/create/sub")
+    private CategoriesEntity createSubCategory(@RequestBody CreateCategoryRequest request){
+        return categoriesService.createSubCategory(request);
+    }
+
+
     @PatchMapping(value = "admin/update/name")
     private CategoriesAdminResponse create(@RequestBody UpdateCategoryRequest request, @RequestParam Long categoryId){
         return categoriesService.updateName(request, categoryId);
