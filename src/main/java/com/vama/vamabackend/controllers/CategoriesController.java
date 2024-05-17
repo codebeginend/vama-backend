@@ -1,9 +1,6 @@
 package com.vama.vamabackend.controllers;
 
-import com.vama.vamabackend.models.categories.CategoriesAdminResponse;
-import com.vama.vamabackend.models.categories.CategoriesForProduct;
-import com.vama.vamabackend.models.categories.CreateCategoryRequest;
-import com.vama.vamabackend.models.categories.UpdateCategoryRequest;
+import com.vama.vamabackend.models.categories.*;
 import com.vama.vamabackend.persistence.entity.categories.CategoriesEntity;
 import com.vama.vamabackend.services.CategoriesService;
 import com.vama.vamabackend.services.ProductStockDetailsService;
@@ -19,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoriesController {
     private CategoriesService categoriesService;
-    private ProductStockDetailsService stockDetailsService;
 
     @GetMapping(value = "all")
     public List<CategoriesEntity> findAll() {
@@ -57,12 +53,12 @@ public class CategoriesController {
     }
 
     @GetMapping(value = "admin/parent/all")
-    private List<CategoriesEntity> findAllForAdminByParentId(@RequestParam() String parentId){
+    private List<CategoryItemAdminResponse> findAllForAdminByParentId(@RequestParam() String parentId){
         Integer id = null;
         if (!parentId.equals("null")){
             id = Integer.parseInt(parentId);
         }
-        List<CategoriesEntity> list = categoriesService.findAllByParentId(id);
+        List<CategoryItemAdminResponse> list = categoriesService.findAllByParentId(id);
         return list;
     }
 

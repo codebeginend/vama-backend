@@ -24,4 +24,11 @@ public class ProductsJdbcRepository {
         List<ProductsAdminType> resultList = jdbcTemplate.query(sql, params, new BeanPropertyRowMapper<>(ProductsAdminType.class));
         return resultList;
     }
+
+    public List<String> getAllFromCategory(Long categoryId) {
+        String sql = "SELECT name FROM products where category_id = ?";
+        Object[] params = new Object[] { categoryId };
+        List<String> list = jdbcTemplate.query(sql, params, (rs, rowNum) -> rs.getString("name"));
+        return list;
+    }
 }

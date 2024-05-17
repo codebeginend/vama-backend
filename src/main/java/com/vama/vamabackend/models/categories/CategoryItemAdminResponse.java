@@ -8,12 +8,9 @@ import java.util.List;
 
 @Data
 @Builder
-public class CategoriesAdminResponse {
+public class CategoryItemAdminResponse {
     private Long id;
-    private Boolean isPublished;
     private String name;
-    private List<String> childs;
-    private List<String> childsTwo;
     private BigDecimal totalProducts;
     private List<String> productsNames;
 }
