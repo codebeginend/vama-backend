@@ -143,13 +143,25 @@ public class ProductsService {
                 update.setStock(request.getStock());
             }
             if (request.getIsUpdateUnit()){
-                update.setUnit(UnitEnum.valueOf(request.getUnit()));
+                if (request.getUnitType() != null){
+                    update.setUnit(UnitEnum.valueOf(request.getUnit()));
+                }else {
+                    update.setUnit(null);
+                    update.setUnitType(null);
+                }
             }
             if (request.getIsUpdateUnitType()){
-                update.setUnitType(UnitTypesEnum.valueOf(request.getUnitType()));
+                if (request.getUnitType() != null){
+                    update.setUnitType(UnitTypesEnum.valueOf(request.getUnitType()));
+                }else {
+                    update.setUnitType(null);
+                }
             }
             if (request.getIsUpdateCategory()){
                 update.setCategoryId(request.getCategoryId());
+            }
+            if (request.getIsUpdateUnitValue()){
+                update.setUnitValue(request.getUnitValue());
             }
             productsRepository.save(update);
             return findDetailsForAdmin(request.getProductId());

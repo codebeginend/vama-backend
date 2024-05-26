@@ -4,5 +4,6 @@ public enum UnitTypesEnum {
     KILOGRAM,
     GRAM,
     MILLILITER,
-    LITER
+    LITER,
+    PIECE
 }

@@ -18,7 +18,9 @@ public class UpdateProductDetailsRequest {
     private String unitType;
     private Boolean isUpdateUnitType;
     private BigDecimal stock;
-    private Boolean isUpdateStock;
+    private BigDecimal unitValue;
+    private Boolean isUpdateUnitValue = false;
+    private Boolean isUpdateStock = false;
     private Long categoryId;
     private Boolean isUpdateCategory;
 }
