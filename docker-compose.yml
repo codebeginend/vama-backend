@@ -35,7 +35,7 @@ services:
       - 8080
     restart: unless-stopped
     volumes:
-      - /opt/upload:./upload
+      - /opt/upload:/opt/upload
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}
       - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}

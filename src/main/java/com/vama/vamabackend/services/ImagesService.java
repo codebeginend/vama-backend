@@ -24,7 +24,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ImagesService {
 
-    private final Path root = Paths.get("upload/products");
+    private final Path root = Paths.get("/opt/upload/products");
     ProductsRepository productsRepository;
 
     public void init() {
