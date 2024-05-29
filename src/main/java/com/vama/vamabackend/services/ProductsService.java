@@ -47,7 +47,11 @@ public class ProductsService {
     }
 
     public List<ProductsEntity> relatedFindAllByIdProductId(Long productId){
-        return productsRepository.findAllById(Arrays.asList(productId)).stream().collect(Collectors.toList());
+        ProductsEntity productsEntity = findById(productId);
+        if (productsEntity != null){
+            return productsRepository.findAllByCategoryIdAndIsNotEqualId(productsEntity.getCategoryId(), productsEntity.getId());
+        }
+        return new ArrayList<>();
     }
 
     public List<ProductsAdminResponse> findAllForAdmin(String searchText, Boolean isPublish){
@@ -231,7 +235,19 @@ public class ProductsService {
         if (entity == null){
             return null;
         }
-        List<ProductsEntity> unionProducts = productsRepository.findAllByIdIn(entity.getUnionProducts());
+        List<ProductsEntity> unionProducts = new ArrayList<>();
+        unionProducts.add(entity);
+        unionProducts.addAll(productsRepository.findAllByIdIn(entity.getUnionProducts()));
+        return unionProducts;
+    }
+
+    public List<ProductsEntity> findAdminAllUnion(Long productId) {
+        ProductsEntity entity = productsRepository.findById(productId).orElse(null);
+        if (entity == null){
+            return null;
+        }
+        List<ProductsEntity> unionProducts = new ArrayList<>();
+        unionProducts.addAll(productsRepository.findAllByIdIn(entity.getUnionProducts()));
         return unionProducts;
     }
 

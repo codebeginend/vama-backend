@@ -46,6 +46,12 @@ public class ProductsController {
         return productsService.findAllUnion(productId);
     }
 
+    @GetMapping(value = "/admin/union/all")
+    private List<ProductsEntity> findAdminAll(@RequestParam() Long productId){
+        return productsService.findAdminAllUnion(productId);
+    }
+
+
     @GetMapping(value = "all/popular")
     private List<ProductsEntity> findAllPopular(){
         return productsService.findAllPopular();

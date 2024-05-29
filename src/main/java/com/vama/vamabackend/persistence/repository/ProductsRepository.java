@@ -11,6 +11,10 @@ import java.util.List;
 public interface ProductsRepository extends JpaRepository<ProductsEntity, Long> {
 
     List<ProductsEntity> findAllByCategoryId(Long categoryId);
+
+    @Query("select product from ProductsEntity product where product.categoryId=:categoryId and product.id != :id")
+    List<ProductsEntity> findAllByCategoryIdAndIsNotEqualId(Long categoryId, Long id);
+
     @Query("select name from ProductsEntity where UPPER(name) LIKE :searchText")
     List<String> findAllLike(String searchText);
 

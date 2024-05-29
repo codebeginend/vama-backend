@@ -2,7 +2,7 @@ package com.vama.vamabackend.services;
 
 import com.vama.vamabackend.persistence.entity.products.ProductsEntity;
 import com.vama.vamabackend.persistence.repository.ProductsRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -17,19 +17,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
 
 @Service
-@AllArgsConstructor
 public class ImagesService {
 
-    private final Path root = Paths.get("/opt/upload/products");
+    @Value("${IMAGES_PATH}")
+    private String imagesPath;
+
     ProductsRepository productsRepository;
+
+    public ImagesService(ProductsRepository productsRepository) {
+        this.productsRepository = productsRepository;
+    }
 
     public void init() {
         try {
-            Files.createDirectories(root);
+            Files.createDirectories(Paths.get(imagesPath));
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize folder for upload!");
         }
@@ -56,7 +59,7 @@ public class ImagesService {
 
     public String saveImage(MultipartFile file, String fileName) {
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(fileName));
+            Files.copy(file.getInputStream(), Paths.get(imagesPath).resolve(fileName));
             return fileName;
         } catch (Exception e) {
             if (e instanceof FileAlreadyExistsException) {
@@ -72,7 +75,7 @@ public class ImagesService {
             throw new NullPointerException();
         }
         try {
-            Path file = root.resolve(entity.getLogo());
+            Path file = Paths.get(imagesPath).resolve(entity.getLogo());
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -87,7 +90,7 @@ public class ImagesService {
 
     public Resource load(String name) {
         try {
-            Path file = root.resolve(name);
+            Path file = Paths.get(imagesPath).resolve(name);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -101,12 +104,12 @@ public class ImagesService {
     }
 
     public boolean delete(String fileName) throws IOException {
-        File file = root.resolve(fileName).toFile();
+        File file = Paths.get(imagesPath).resolve(fileName).toFile();
         return FileSystemUtils.deleteRecursively(file);
     }
 
     public boolean existFile(String fileName){
-        File file = root.resolve(fileName).toFile();
+        File file = Paths.get(imagesPath).resolve(fileName).toFile();
         return file.isFile();
     }
 }
