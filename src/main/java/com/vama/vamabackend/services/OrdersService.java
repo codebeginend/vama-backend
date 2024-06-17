@@ -59,7 +59,7 @@ public class OrdersService {
             productCount.setProduct(val);
             return productCount;
         }).collect(Collectors.toList());
-        List<OrderItemsEntity> itemsEntities = productCountList.stream().map(m -> new OrderItemsEntity(m.getCount(), m.getProduct().getId(), orders.getId(), m.getProduct().getPrice(), m.getProduct().getDiscount())).collect(Collectors.toList());
+        List<OrderItemsEntity> itemsEntities = productCountList.stream().map(m -> new OrderItemsEntity(m.getCount(), m.getProduct().getId(), orders.getId(), m.getProduct().getPrice(), m.getProduct().getDiscount() != null ? m.getProduct().getDiscount() : BigDecimal.ZERO)).collect(Collectors.toList());
         orderItemsRepository.saveAll(itemsEntities);
     }
 

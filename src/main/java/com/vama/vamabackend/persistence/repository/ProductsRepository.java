@@ -12,6 +12,8 @@ public interface ProductsRepository extends JpaRepository<ProductsEntity, Long> 
 
     List<ProductsEntity> findAllByCategoryId(Long categoryId);
 
+    List<ProductsEntity> findAllByCategoryIdIn(List<Long> categoryId);
+
     @Query("select product from ProductsEntity product where product.categoryId=:categoryId and product.id != :id")
     List<ProductsEntity> findAllByCategoryIdAndIsNotEqualId(Long categoryId, Long id);
 

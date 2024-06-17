@@ -5,5 +5,7 @@ public enum UnitTypesEnum {
     GRAM,
     MILLILITER,
     LITER,
-    PIECE
+    PIECE,
+    QUART,
+    MILLIMETERS
 }

@@ -26,7 +26,13 @@ public class ProductsService {
 
 
     public List<ProductsEntity> findAllByCategoryId(Long categoryId){
-        return productsRepository.findAllByCategoryId(categoryId);
+        List<Long> ids = new ArrayList<>();
+        ids.add(categoryId);
+        List<CategoriesEntity> list = categoriesRepository.findAllByParentId(Integer.valueOf(categoryId.intValue()));
+        if (!list.isEmpty()){
+            ids.addAll(list.stream().map(m -> m.getId()).collect(Collectors.toList()));
+        }
+        return productsRepository.findAllByCategoryIdIn(ids);
     }
 
     public List<ProductsEntity> findAllByName(String name){
@@ -261,7 +267,7 @@ public class ProductsService {
             Long[] unionsArray = new Long[(entity.getUnionProducts().length - 1)];
             int index = 0;
             for (int x = 0; x < entity.getUnionProducts().length; x++){
-                if (entity.getUnionProducts()[x] != unionProductId){
+                if (!entity.getUnionProducts()[x].equals(unionProductId)){
                     unionsArray[index] = entity.getUnionProducts()[x];
                     index++;
                 }

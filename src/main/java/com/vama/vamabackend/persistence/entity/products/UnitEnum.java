@@ -4,4 +4,5 @@ public enum UnitEnum {
     VOLUME,
     WEIGHT,
     COUNT,
+    SIZE
 }
